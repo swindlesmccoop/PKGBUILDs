@@ -1,0 +1,21 @@
+pkgname="liisten"
+pkgver=1
+pkgrel=1
+pkgdesc="A CLI to comfortably listen to BRSTM files"
+arch=("x86_64")
+url="https://git.cbps.xyz/swindlesmccoop/not-just-dotfiles/src/branch/master/.local/bin/liisten"
+depends=("fzf" "dmenu" "mpv" "vgmstream")
+license=("custom")
+md5sums=("SKIP")
+source=("git+https://git.cbps.xyz/swindlesmccoop/not-just-dotfiles.git")
+
+pkgver() {
+	cd "$pkgname"
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+	cd "not-just-dotfiles/.local/bin/"
+	install -Dm755 ./liisten "$pkgdir/usr/bin/liisten"
+	install -Dm755 ./sb-liisten "$pkgdir/usr/bin/sb-liisten"
+}
