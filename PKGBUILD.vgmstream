@@ -1,5 +1,4 @@
-#Maintainer: swindlesmccoop <https://swindlesmccoop.xyz>
-#Contact: swindlesmccoop@waifu.club
+# Maintainer: <swindlesmccoop@waifu.club>
 pkgname="vgmstream"
 pkgver=1
 pkgrel=1
@@ -14,12 +13,11 @@ source=("git+https://github.com/vgmstream/vgmstream.git")
 pkgver() {
 	cd "$pkgname"
 	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+	mkdir -p build
 }
 
 package () {
-	cd "$pkgname"
-	mkdir -p build
-	cd build
+	cd "$pkgname/build"
 	cmake -S .. -B .
 	make
 	cd cli
