@@ -1,2 +1,2 @@
 # How to use
-Simply remove the "extension" on the package you want to install and run `makepkg -si`
+cd into the directory of the program you want to build and run `makepkg -si`
