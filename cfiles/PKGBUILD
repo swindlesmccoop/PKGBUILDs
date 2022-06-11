@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname="cfiles"
-pkgver=r150.eb897fa
+pkgver=1
 pkgrel=1
 pkgdesc="A simple ncurses file manager written in C with extra QOL changes"
 arch=("x86_64")
