@@ -1,7 +1,7 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname="cfiles"
-pkgver=1
-pkgrel=1
+pkgver=r150.eb897fa
+pkgrel=2
 pkgdesc="A simple ncurses file manager written in C with extra QOL changes"
 arch=("x86_64")
 url="https://git.cbps.xyz/swindlesmccoop/cfiles"
@@ -23,5 +23,10 @@ pkgver() {
 package() {
 	cd "$pkgname"
 	make
-	sudo make install
+	install -Dm755 cfiles "$pkgdir/usr/bin/cfiles"
+	install -Dm755 "scripts/clearimg" "$pkgdir/usr/share/cfiles/scripts/clearimg"
+	install -Dm755 "scripts/displayimg" "$pkgdir/usr/share/cfiles/scripts/displayimg"
+	install -Dm755 "scripts/clearimg_uberzug" "$pkgdir/usr/share/cfiles/scripts/clearimg"
+	install -Dm755 "scripts/displayimg_uberzug" "$pkgdir/usr/share/cfiles/scripts/displayimg"
+	install -Dm644 cfiles.1 "$pkgdir/usr/share/man/man1/cfiles.1"
 }
