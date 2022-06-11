@@ -1,0 +1,27 @@
+# Maintainer: <swindlesmccoop@waifu.club>
+pkgname="cfiles"
+pkgver=r150.eb897fa
+pkgrel=1
+pkgdesc="A simple ncurses file manager written in C with extra QOL changes"
+arch=("x86_64")
+url="https://git.cbps.xyz/swindlesmccoop/cfiles"
+depends=("ncurses" "fzf")
+optdepends=("fzf: search function"
+			"ueberzug: image previews"
+			"mediainfo: view media info and file sizes"
+			"atool: archive previews"
+			"poppler: pdf previews")
+license=("MIT")
+md5sums=("SKIP")
+source=("git+https://git.cbps.xyz/swindlesmccoop/cfiles.git")
+
+pkgver() {
+	cd "$pkgname"
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+	cd "$pkgname"
+	make
+	sudo make install
+}
