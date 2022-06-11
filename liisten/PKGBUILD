@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname="liisten"
-pkgver=1
+pkgver=r277.5d5ea4a
 pkgrel=1
 pkgdesc="A CLI to comfortably listen to BRSTM files"
 arch=("x86_64")
@@ -11,7 +11,7 @@ md5sums=("SKIP")
 source=("git+https://git.cbps.xyz/swindlesmccoop/not-just-dotfiles.git")
 
 pkgver() {
-	cd "$pkgname"
+	cd "not-just-dotfiles"
 	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
