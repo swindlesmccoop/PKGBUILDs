@@ -1,11 +1,11 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname="cfiles"
-pkgver=r150.eb897fa
-pkgrel=2
+pkgver=1
+pkgrel=1
 pkgdesc="A simple ncurses file manager written in C with extra QOL changes"
 arch=("x86_64")
 url="https://git.cbps.xyz/swindlesmccoop/cfiles"
-depends=("ncurses" "fzf")
+depends=("ncurses")
 optdepends=("fzf: search function"
 			"ueberzug: image previews"
 			"mediainfo: view media info and file sizes"
@@ -26,7 +26,7 @@ package() {
 	install -Dm755 cfiles "$pkgdir/usr/bin/cfiles"
 	install -Dm755 "scripts/clearimg" "$pkgdir/usr/share/cfiles/scripts/clearimg"
 	install -Dm755 "scripts/displayimg" "$pkgdir/usr/share/cfiles/scripts/displayimg"
-	install -Dm755 "scripts/clearimg_uberzug" "$pkgdir/usr/share/cfiles/scripts/clearimg"
-	install -Dm755 "scripts/displayimg_uberzug" "$pkgdir/usr/share/cfiles/scripts/displayimg"
+	install -Dm755 "scripts/clearimg_ueberzug" "$pkgdir/usr/share/cfiles/scripts/clearimg_ueberzug"
+	install -Dm755 "scripts/displayimg_ueberzug" "$pkgdir/usr/share/cfiles/scripts/displayimg_ueberzug"
 	install -Dm644 cfiles.1 "$pkgdir/usr/share/man/man1/cfiles.1"
 }
