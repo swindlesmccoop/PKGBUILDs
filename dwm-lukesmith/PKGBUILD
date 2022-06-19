@@ -1,0 +1,29 @@
+# Maintainer: <swindlesmccoop@waifu.club>
+pkgname=st-lukesmith
+pkgver=r1189.3144a61
+pkgrel=1
+pkgdesc="Luke Smith's build of the suckless terminal"
+arch=("x86_64")
+license=("MIT")
+md5sums=("SKIP")
+depends=("libxft-bgra")
+conflicts=("st")
+url="https://github.com/lukesmithxyz/st"
+source=("git+https://github.com/lukesmithxyz/st.git")
+
+pkgver() {
+	cd st
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+	cd st
+	make
+	install -Dm755 ./st "$pkgdir/usr/bin/st"
+	install -Dm755 ./st-copyout "$pkgdir/usr/bin/st-copyout"
+	install -Dm755 ./st-urlhandler "$pkgdir/usr/bin/st-urlhandler"
+	install -Dm644 ./st.1 "$pkgdir/usr/share/man/man1/st.1"
+	sed "s/VERSION/$pkgver/g" < st.1 > "$pkgdir/usr/share/man/man1/st.1"
+	tic -sx st.info
+	echo "Please see the README file regarding the terminfo entry of st."
+}

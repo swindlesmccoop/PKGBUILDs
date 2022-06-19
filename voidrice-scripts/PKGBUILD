@@ -1,0 +1,25 @@
+# Maintainer: <swindlesmccoop@waifu.club>
+pkgname=voidrice-scripts
+pkgver=r1589.09ca9e57
+pkgrel=1
+pkgdesc="A collection of Luke Smith's POSIX sh scripts"
+arch=("x86_64")
+depends=("ttf-linux-libertine" "lf-git" "ueberzug" "bc" "xcompmgr" "xorg-xprop" "arandr" "dosfstools" "libnotify" "dunst" "exfat-utils" "sxiv" "xwallpaper" "ffmpeg" "ffmpegthumbnailer" "gnome-keyring" "gtk-theme-arc-gruvbox-git" "python-qdarkstyle" "neovim" "mpd" "mpc" "mpv" "man-db" "ncmpcpp" "newsboat" "noto-fonts-emoji" "ntfs-3g" "pulsemixer" "pamixer" "sc-im" "maim" "abook" "unclutter" "xcape" "xclip" "fzf" "bat" "xorg-xbacklight" "task-spooler" "simple-mtpfs" "mutt-wizard-git" "socat" "moreutils")
+license=("GPL3")
+md5sums=("SKIP")
+source=("git+https://github.com/lukesmithxyz/voidrice.git")
+
+pkgver() {
+	cd voidrice
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+	cd voidrice/.local/bin/
+	#install -Dm755 booksplit compiler displayselect dmenuhandler dmenumount dmenumountcifs dmenupass dmenurecord dmenuumount dmenuunicode getbib getkeys ifinstalled lfub linkhandler maimpick noisereduce opout otp pauseallmpv peertubetorrent podentr prompt qndl queueandnotify remaps rotdir rssadd samedir setbg shortcuts slider sysact tag td-toggle texclear torwrap transadd tutorialvids unix --target-directory="$pkgdir/usr/bin"
+	install -Dm755 $(ls -pd * | grep -Ev /$) --target-directory="$pkgdir/usr/bin"
+	cd cron
+	install -Dm755 checkup crontog newsup --target-directory="$pkgdir/usr/bin"
+	cd ../statusbar
+	install -Dm755 sb* --target-directory="$pkgdir/usr/bin"
+}

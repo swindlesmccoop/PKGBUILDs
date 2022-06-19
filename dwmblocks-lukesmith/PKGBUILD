@@ -1,0 +1,22 @@
+# Maintainer: <swindlesmccoop@waifu.club>
+pkgname=dwmblocks-lukesmith
+pkgver=r107.66f31c3
+pkgrel=1
+pkgdesc="Luke Smith's build of the suckless window manager status bar"
+arch=("x86_64")
+depends=("voidrice-scripts")
+license=("GPL2")
+md5sums=("SKIP")
+url="https://github.com/lukesmithxyz/dwmblocks"
+source=("git+https://github.com/lukesmithxyz/dwmblocks.git")
+
+pkgver() {
+	cd dwmblocks
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+	cd dwmblocks
+	make
+	install -Dm755 ./dwmblocks "$pkgdir/usr/bin/dwmblocks"
+}
