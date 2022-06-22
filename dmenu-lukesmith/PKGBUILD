@@ -1,0 +1,33 @@
+# Maintainer: <swindlesmccoop@waifu.club>
+pkgname=dmenu-lukesmith
+pkgver=r33.b60e438
+pkgrel=1
+pkgdesc="Luke Smith's build of the suckless dynamic menu"
+arch=("x86_64")
+license=("MIT")
+md5sums=("SKIP")
+depends=("libxft-bgra")
+conflicts=("dmenu")
+url="https://github.com/lukesmithxyz/st"
+source=("git+https://github.com/lukesmithxyz/dmenu.git")
+
+pkgver() {
+	cd dmenu
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+	cd dmenu
+	make
+	mkdir -p $pkgdir/usr/bin
+	cp -f dmenu dmenu_path dmenu_run stest $pkgdir/usr/bin
+	chmod 755 $pkgdir/usr/bin/dmenu
+	chmod 755 $pkgdir/usr/bin/dmenu_path
+	chmod 755 $pkgdir/usr/bin/dmenu_run
+	chmod 755 $pkgdir/usr/bin/stest
+	mkdir -p $pkgdir/usr/share/man1
+	sed "s/VERSION/$pkgver/g" < dmenu.1 > $pkgdir/usr/share/man1/dmenu.1
+	sed "s/VERSION/$pkgver/g" < stest.1 > $pkgdir/usr/share/man1/stest.1
+	chmod 644 $pkgdir/usr/share/man1/dmenu.1
+	chmod 644 $pkgdir/usr/share/man1/stest.1
+	}
