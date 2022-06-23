@@ -1,29 +1,26 @@
 # Maintainer: <swindlesmccoop@waifu.club>
-pkgname=st-lukesmith
-pkgver=r1189.3144a61
+pkgname=dwm-lukesmith
+pkgver=r1893.7c356f7
 pkgrel=1
-pkgdesc="Luke Smith's build of the suckless terminal"
+pkgdesc="Luke Smith's build of the suckless dynamic window manager"
 arch=("x86_64")
 license=("MIT")
 md5sums=("SKIP")
-depends=("libxft-bgra")
-conflicts=("st")
-url="https://github.com/lukesmithxyz/st"
-source=("git+https://github.com/lukesmithxyz/st.git")
+depends=("dmenu-lukesmith" "libx11" "libxft-bgra" "libxinerama" "st-lukesmith" "freetype2")
+conflicts=("dwm")
+url="https://github.com/lukesmithxyz/dwm"
+source=("git+https://github.com/lukesmithxyz/dwm.git")
 
 pkgver() {
-	cd st
+	cd dwm
 	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
 package() {
-	cd st
+	cd dwm
 	make
-	install -Dm755 ./st "$pkgdir/usr/bin/st"
-	install -Dm755 ./st-copyout "$pkgdir/usr/bin/st-copyout"
-	install -Dm755 ./st-urlhandler "$pkgdir/usr/bin/st-urlhandler"
-	install -Dm644 ./st.1 "$pkgdir/usr/share/man/man1/st.1"
-	sed "s/VERSION/$pkgver/g" < st.1 > "$pkgdir/usr/share/man/man1/st.1"
-	tic -sx st.info
-	echo "Please see the README file regarding the terminfo entry of st."
+	install -Dm755 dwm $pkgdir/usr/bin/dwm
+	mkdir -p $pkgdir/usr/share/man/man1/
+	sed "s/VERSION/$pkgver/g" < dwm.1 > $pkgdir/usr/share/man/man1/dwm.1
+	install -Dm644 larbs.mom $pkgdir/usr/share/dwm
 }
