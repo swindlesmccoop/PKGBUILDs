@@ -14,6 +14,6 @@ all:
 	$(call makearg,spdl)
 	$(call makearg,st-lukesmith)
 	$(call makearg,vgmstream)
-	$(call makearg,voidirce-scripts)
+	$(call makearg,voidrice-scripts)
 
 .PHONY: all
