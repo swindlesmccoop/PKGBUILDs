@@ -1,7 +1,6 @@
-DIR=${HOME}/git/swindles-arch-packages
-
 define makearg
-	cd $(1) && makepkg -s && cd ..
+	@#cd $(1) && chattr +i PKGBUILD && makepkg -s PKGBUILD && chattr -i && cd ..
+	cd $(1) && makepkg -sf && cd ..
 endef
 
 all:
@@ -15,5 +14,8 @@ all:
 	$(call makearg,st-lukesmith)
 	$(call makearg,vgmstream)
 	$(call makearg,voidrice-scripts)
+	@#printf "\033[1;32m"
+	@#mv */*.pkg.tar.zst ${PKGDIR}/${ARCHITECTURE}/
+	@#printf "\033[0m"
 
 .PHONY: all
