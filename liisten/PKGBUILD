@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname="liisten"
-pkgver=r277.5d5ea4a
+pkgver=r383.6506109
 pkgrel=1
 pkgdesc="A CLI to comfortably listen to BRSTM files"
 arch=("x86_64")

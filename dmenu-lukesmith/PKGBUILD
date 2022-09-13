@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname=dmenu-lukesmith
-pkgver=r33.b60e438
+pkgver=r39.705b3c7
 pkgrel=1
 pkgdesc="Luke Smith's build of the suckless dynamic menu"
 arch=("x86_64")

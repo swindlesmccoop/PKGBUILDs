@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname="vgmstream"
-pkgver=1
+pkgver=r5877.0be524e8
 pkgrel=1
 pkgdesc="Command line tools for playing video game streams"
 arch=("x86_64")

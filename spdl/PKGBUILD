@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname="spdl"
-pkgver=2
+pkgver=r51.5407f30
 pkgrel=1
 pkgdesc="Download StepMania packs through the terminal"
 arch=("any")

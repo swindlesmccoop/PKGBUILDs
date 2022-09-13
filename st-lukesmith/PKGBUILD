@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname=st-lukesmith
-pkgver=r1189.3144a61
+pkgver=r1383.ebf6f66
 pkgrel=1
 pkgdesc="Luke Smith's build of the suckless terminal"
 arch=("x86_64")

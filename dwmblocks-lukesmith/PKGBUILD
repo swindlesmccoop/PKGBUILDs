@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname=dwmblocks-lukesmith
-pkgver=r107.66f31c3
+pkgver=r108.5a6fa8d
 pkgrel=1
 pkgdesc="Luke Smith's build of the suckless window manager status bar"
 arch=("x86_64")
