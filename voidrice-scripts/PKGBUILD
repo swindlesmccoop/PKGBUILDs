@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname=voidrice-scripts
-pkgver=r1642.5d5e3b65
+pkgver=r1666.4eeba15c
 pkgrel=1
 pkgdesc="A collection of Luke Smith's POSIX sh scripts"
 arch=("x86_64")
@@ -16,10 +16,9 @@ pkgver() {
 
 package() {
 	cd voidrice/.local/bin/
-	install -Dm755 booksplit compiler displayselect dmenuhandler dmenumount dmenumountcifs dmenupass dmenurecord dmenuumount dmenuunicode getbib getkeys ifinstalled lfub linkhandler maimpick noisereduce opout otp pauseallmpv peertubetorrent podentr prompt qndl queueandnotify remaps rotdir rssadd setbg shortcuts slider sysact tag td-toggle texclear torwrap transadd tutorialvids unix --target-directory="$pkgdir/usr/bin"
 	install -Dm755 $(ls -pd * | grep -Ev /$) --target-directory="$pkgdir/usr/bin"
 	cd cron
-	install -Dm755 checkup crontog newsup --target-directory="$pkgdir/usr/bin"
+	install -Dm755 $(ls -pd * | grep -Ev /$) --target-directory="$pkgdir/usr/bin"
 	cd ../statusbar
 	install -Dm755 sb* --target-directory="$pkgdir/usr/bin"
 }
