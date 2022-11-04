@@ -1,0 +1,23 @@
+# Maintainer: <swindlesmccoop@waifu.club>
+pkgname=dwmblocks-swindles
+pkgver=r9.8e1d5ee
+pkgrel=1
+pkgdesc="Swindles McCoop's build of the suckless window manager status bar"
+arch=("x86_64")
+#depends=("njd-scripts")
+license=("GPL2")
+md5sums=("SKIP")
+url="https://git.cbps.xyz/swindlesmccoop/dwmblocks"
+source=("git+https://git.cbps.xyz/swindlesmccoop/dwmblocks.git")
+
+pkgver() {
+	cd dwmblocks
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+	cd dwmblocks
+	./configure
+	make
+	install -Dm755 ./dwmblocks "$pkgdir/usr/bin/dwmblocks"
+}
