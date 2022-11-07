@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname=voidrice-scripts
-pkgver=r1666.4eeba15c
+pkgver=r1667.75bc064a
 pkgrel=1
 pkgdesc="A collection of Luke Smith's POSIX sh scripts"
 arch=("x86_64")
