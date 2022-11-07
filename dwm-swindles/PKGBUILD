@@ -1,0 +1,26 @@
+# Maintainer: <swindlesmccoop@waifu.club>
+pkgname=dwm-swindles
+pkgver=r33.9951fc3
+pkgrel=1
+pkgdesc="Swindles McCoop's build of the suckless dynamic window manager"
+arch=("x86_64")
+license=("MIT")
+md5sums=("SKIP")
+depends=("dmenu-lukesmith" "libx11" "libxinerama" "st-lukesmith" "freetype2" "dwmblocks-swindles")
+conflicts=("dwm" "dwm-lukesmith")
+url="https://gith.cbps.xyz/swindlesmccoop/dwm"
+source=("git+https://git.cbps.xyz/swindlesmccoop/dwm.git")
+
+pkgver() {
+	cd dwm
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+	cd dwm
+	./configure
+	make
+	install -Dm755 dwm $pkgdir/usr/bin/dwm
+	mkdir -p $pkgdir/usr/share/man/man1/
+	sed "s/VERSION/$pkgver/g" < dwm.1 > $pkgdir/usr/share/man/man1/dwm.1
+}
