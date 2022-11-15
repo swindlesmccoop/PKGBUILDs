@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname=dwm-lukesmith
-pkgver=r1913.4ecf33f
+pkgver=r1915.0f325ef
 pkgrel=1
 pkgdesc="Luke Smith's build of the suckless dynamic window manager"
 arch=("x86_64")
