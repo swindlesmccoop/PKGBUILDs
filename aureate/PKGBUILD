@@ -1,0 +1,23 @@
+# Maintainer: <swindlesmccoop@waifu.club>
+pkgname=aureate
+pkgver=r57.4912dfb
+pkgrel=1
+pkgdesc="Minimalist AUR helper written in C"
+arch=("x86_64")
+license=("custom")
+md5sums=("SKIP")
+depends=("curl" "libgit2" "json-c")
+url="https://github.com/swindlesmccoop/aureate"
+source=("git+https://github.com/swindlesmccoop/aureate.git")
+
+pkgver() {
+	cd $pkgname
+	printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+package() {
+	cd $pkgname
+	make
+	install -Dm755 $pkgname $pkgdir/usr/bin/$pkgname
+	install -Dm644 $pkgname.1 $pkgdir/usr/share/man/man1/$pkgname.1
+}
