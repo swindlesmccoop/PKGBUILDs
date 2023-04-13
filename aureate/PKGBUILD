@@ -17,7 +17,8 @@ pkgver() {
 
 package() {
 	cd $pkgname
+	#cc $pkgname.c -lgit2 -lcurl -ljson-c -o $pkgname
 	make
-	install -Dm755 $pkgname $pkgdir/usr/bin/$pkgname
-	install -Dm644 $pkgname.1 $pkgdir/usr/share/man/man1/$pkgname.1
+	install -Dm755 ./$pkgname $pkgdir/usr/bin/$pkgname
+	install -Dm644 ./$pkgname.1 $pkgdir/usr/share/man/man1/$pkgname.1
 }
