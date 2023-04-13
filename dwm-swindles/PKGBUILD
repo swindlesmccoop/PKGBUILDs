@@ -8,8 +8,8 @@ license=("MIT")
 md5sums=("SKIP")
 depends=("dmenu-lukesmith" "libx11" "libxinerama" "st-lukesmith" "freetype2" "dwmblocks-swindles")
 conflicts=("dwm" "dwm-lukesmith")
-url="https://gith.cbps.xyz/swindlesmccoop/dwm"
-source=("git+https://git.cbps.xyz/swindlesmccoop/dwm.git")
+url="https://github.com/swindlesmccoop/dwm"
+source=("git+https://github.com/swindlesmccoop/dwm.git")
 
 pkgver() {
 	cd dwm

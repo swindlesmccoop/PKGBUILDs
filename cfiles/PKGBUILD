@@ -4,7 +4,7 @@ pkgver=r154.f2cf70a
 pkgrel=1
 pkgdesc="A simple ncurses file manager written in C with extra QOL changes"
 arch=("x86_64")
-url="https://git.cbps.xyz/swindlesmccoop/cfiles"
+url="https://github.com/swindlesmccoop/cfiles"
 depends=("ncurses")
 optdepends=("fzf: search function"
 			"ueberzug: image previews"
@@ -13,7 +13,7 @@ optdepends=("fzf: search function"
 			"poppler: pdf previews")
 license=("MIT")
 md5sums=("SKIP")
-source=("git+https://git.cbps.xyz/swindlesmccoop/cfiles.git")
+source=("git+https://github.com/swindlesmccoop/cfiles.git")
 
 pkgver() {
 	cd "$pkgname"

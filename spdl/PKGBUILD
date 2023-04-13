@@ -4,12 +4,12 @@ pkgver=r51.5407f30
 pkgrel=1
 pkgdesc="Download StepMania packs through the terminal"
 arch=("any")
-url="https://git.cbps.xyz/swindlesmccoop/spdl"
+url="https://github.com/swindlesmccoop/spdl"
 depends=("curl" "fzf" "git" "unzip")
 optdepends=("libnotify: Desktop notifications when download complete")
 license=("custom")
 md5sums=("SKIP")
-source=("git+https://git.cbps.xyz/swindlesmccoop/spdl.git")
+source=("git+https://github.com/swindlesmccoop/spdl.git")
 
 pkgver() {
 	cd "$pkgname"

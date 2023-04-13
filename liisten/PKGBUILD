@@ -1,14 +1,14 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname="liisten"
-pkgver=r436.5fb97f4
+pkgver=r442.d6ceb1c
 pkgrel=1
 pkgdesc="A CLI to comfortably listen to BRSTM files"
 arch=("x86_64")
-url="https://git.cbps.xyz/swindlesmccoop/not-just-dotfiles/src/branch/master/.local/bin/liisten"
+url="https://github.com/swindlesmccoop/not-just-dotfiles/blob/master/.local/bin/liisten"
 depends=("fzf" "dmenu" "mpv" "vgmstream")
 license=("custom")
 md5sums=("SKIP")
-source=("git+https://git.cbps.xyz/swindlesmccoop/not-just-dotfiles.git")
+source=("git+https://github.com/swindlesmccoop/not-just-dotfiles.git")
 
 pkgver() {
 	cd "not-just-dotfiles"
