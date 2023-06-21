@@ -1,6 +1,6 @@
 # Maintainer: <swindlesmccoop@waifu.club>
 pkgname=aureate
-pkgver=r57.4912dfb
+pkgver=r72.7000430
 pkgrel=1
 pkgdesc="Minimalist AUR helper written in C"
 arch=("x86_64")
