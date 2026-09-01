@@ -1,0 +1,90 @@
+name: Build Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        type: choice
+        options: [wallust]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
+    steps:
+      - run: pacman -Syu --noconfirm git base-devel jq curl yq github-cli
+
+      - uses: actions/checkout@v4
+
+      - id: build
+        env:
+          SOURCE_TOKEN: ${{ secrets.SOURCE_TOKEN }}
+        run: |
+          set -euo pipefail
+          package="${{ inputs.package }}"
+          cfg="packages/${package}/build.yaml"
+
+          ref="$(yq -r '.source.ref // ""' "$cfg")"
+          if [[ -z "$ref" || "$ref" == latest ]]; then
+            ref="$(curl -fsSL "$(yq -r '.source.releases' "$cfg")" | jq -r '
+              [.[] | select((.draft // false) | not) | select((.prerelease // false) | not)][0].tag_name
+            ')"
+          fi
+          [[ -n "$ref" && "$ref" != null ]]
+
+          name="$(yq -r '.name' "$cfg")"
+          arch="$(yq -r '.arch' "$cfg")"
+          pkgbuild="$(yq -r '.pkgbuild' "$cfg")"
+          repo="$(yq -r '.source.repo' "$cfg")"
+          pkgver="${ref#v}"; pkgver="${pkgver//-/.}"
+          tag="${name}-v${pkgver}"
+
+          src="$(mktemp -d)" staging="$(mktemp -d)"
+          trap 'rm -rf "$src" "$staging"' EXIT
+          clone="$repo"
+          [[ -z "${SOURCE_TOKEN:-}" ]] || clone="${repo/https:\/\//https://x-access-token:${SOURCE_TOKEN}@}"
+
+          git clone --depth 1 -b "$ref" "$clone" "$src"
+          mapfile -t deps < <(yq -r '.makedepends[]? // empty' "$cfg")
+          ((${#deps[@]})) && pacman -Syu --noconfirm --needed "${deps[@]}"
+
+          export STAGING="$staging"
+          (cd "$src" && bash -euo pipefail -c "$(yq -r '.build' "$cfg")")
+          (cd "$src" && bash -euo pipefail -c "$(yq -r '.stage' "$cfg")")
+
+          mkdir -p artifacts
+          tarball="${name}-${pkgver}-${arch}.tar.gz"
+          tar -C "$staging" -czf "artifacts/$tarball" .
+          sha256="$(sha256sum "artifacts/$tarball" | awk '{print $1}')"
+
+          {
+            echo "ref=$ref"
+            echo "pkgver=$pkgver"
+            echo "pkgbuild=$pkgbuild"
+            echo "tag=$tag"
+            echo "tarball_name=$tarball"
+            echo "sha256=$sha256"
+          } >>"$GITHUB_OUTPUT"
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          dir="${{ steps.build.outputs.pkgbuild }}"
+          sed -i \
+            -e "s/^pkgver=.*/pkgver=${{ steps.build.outputs.pkgver }}/" \
+            -e "s/^pkgrel=.*/pkgrel=1/" \
+            -e "s/^sha256sums=.*/sha256sums=('${{ steps.build.outputs.sha256 }}')/" \
+            "$dir/PKGBUILD"
+          gh release upload "${{ steps.build.outputs.tag }}" "artifacts/${{ steps.build.outputs.tarball_name }}" --clobber 2>/dev/null \
+            || gh release create "${{ steps.build.outputs.tag }}" "artifacts/${{ steps.build.outputs.tarball_name }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$dir/PKGBUILD"
+          git diff --cached --quiet || git commit -m "chore(${dir}): ${{ steps.build.outputs.pkgver }} [skip ci]"
+          git push

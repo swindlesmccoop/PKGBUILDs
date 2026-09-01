@@ -1,0 +1,13 @@
+name: wallust
+source:
+  repo: https://codeberg.org/explosion-mental/wallust.git
+  releases: https://codeberg.org/api/v1/repos/explosion-mental/wallust/releases?limit=20
+arch: x86_64
+pkgbuild: wallust-bin
+makedepends:
+  - rust
+  - cargo
+build: |
+  make
+stage: |
+  make install DESTDIR="$STAGING" PREFIX=/usr

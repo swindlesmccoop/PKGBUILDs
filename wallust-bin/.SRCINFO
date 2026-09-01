@@ -1,0 +1,13 @@
+pkgbase = wallust-bin
+	pkgdesc = Generate colors from an image (prebuilt binary)
+	pkgver = 3.5.2
+	pkgrel = 1
+	url = https://codeberg.org/explosion-mental/wallust
+	arch = x86_64
+	license = MIT
+	depends = glibc
+	optdepends = imagemagick: wal backend
+	source = https://github.com/swindlesmccoop/PKGBUILDs/releases/download/wallust-v3.5.2/wallust-3.5.2-x86_64.tar.gz
+	sha256sums = PLACEHOLDER
+
+pkgname = wallust-bin
