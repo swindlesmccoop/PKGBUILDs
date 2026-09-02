@@ -6,7 +6,6 @@ arch: x86_64
 pkgbuild: wallust-bin
 makedepends:
   - rust
-  - cargo
 build: |
   make
 stage: |
