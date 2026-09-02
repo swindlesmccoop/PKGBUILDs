@@ -1,6 +1,6 @@
 # Maintainer: swindlesmccoop@waifu.club
 pkgname=wallust-bin
-pkgver=3.5.2
+pkgver=4.0.0.alpha
 pkgrel=1
 pkgdesc="Generate colors from an image (prebuilt binary)"
 arch=('x86_64')
@@ -9,7 +9,7 @@ license=('MIT')
 depends=('glibc')
 optdepends=('imagemagick: wal backend')
 source=("https://github.com/swindlesmccoop/PKGBUILDs/releases/download/wallust-v${pkgver}/wallust-${pkgver}-x86_64.tar.gz")
-sha256sums=('f1d71951f57146b8a1e4de3d1e888d92ee430010c4d57ea70ad5b32aa5bb2ed2')
+sha256sums=('50f69b1db565f7f69b7564486f94013e4aca29a664cf030303ae1a4b3a5d8588')
 
 package() {
   tar -xzf "$srcdir/wallust-${pkgver}-x86_64.tar.gz" -C "$pkgdir"
