@@ -59,7 +59,7 @@ jobs:
           [[ -z "${SOURCE_TOKEN:-}" ]] || clone="${repo/https:\/\//https://x-access-token:${SOURCE_TOKEN}@}"
 
           git clone --depth 1 -b "$ref" "$clone" "$src"
-          mapfile -t deps < <(yq -r '.makedepends[]? // empty' "$cfg")
+          mapfile -t deps < <(yq -r '.makedepends[]' "$cfg" | grep -v '^null$')
           ((${#deps[@]})) && pacman -S --noconfirm --needed "${deps[@]}"
 
           export STAGING="$staging"
