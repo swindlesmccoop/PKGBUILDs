@@ -9,7 +9,7 @@ license=('MIT')
 depends=('glibc')
 optdepends=('imagemagick: wal backend')
 source=("https://github.com/swindlesmccoop/PKGBUILDs/releases/download/wallust-v${pkgver}/wallust-${pkgver}-x86_64.tar.gz")
-sha256sums=('50f69b1db565f7f69b7564486f94013e4aca29a664cf030303ae1a4b3a5d8588')
+sha256sums=('93ef19458b5c8b8684bcd04818df759e4a585393fbf4bc92cf366f51321b6b05')
 
 package() {
   tar -xzf "$srcdir/wallust-${pkgver}-x86_64.tar.gz" -C "$pkgdir"
