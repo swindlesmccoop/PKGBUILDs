@@ -1,1 +1,8 @@
 README.md
+
+# makepkg artifacts
+*/src/
+*/pkg/
+*/*.pkg.tar.*
+*/*.pkg.tar.zst.sig
+*/.makepkg.conf
