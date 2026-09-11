@@ -2,7 +2,7 @@
 pkgname=wheelwizard-bin
 _name=WheelWizard
 _app_id=io.github.TeamWheelWizard.WheelWizard
-pkgver=2.5.4
+pkgver=2.5.5
 _pkgver="v$pkgver"
 pkgrel=1
 pkgdesc="Mario Kart Mod Manager & Retro Rewind Auto Updater (prebuilt binary)"
