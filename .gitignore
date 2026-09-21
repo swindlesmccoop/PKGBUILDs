@@ -6,3 +6,8 @@ README.md
 */*.pkg.tar.*
 */*.pkg.tar.zst.sig
 */.makepkg.conf
+*LICENSE*
+*.desktop
+*.png
+*_Linux
+*.tar.gz

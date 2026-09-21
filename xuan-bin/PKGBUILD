@@ -1,0 +1,51 @@
+# Maintainer: swindlesmccoop@waifu.club
+pkgname=xuan-bin
+_pkgname=xuan
+_app_id=me.silverl.xuan
+pkgver=0.1.1
+pkgrel=1
+pkgdesc="Image editor for layered compositions, photo retouching, and Nikon RAW development (prebuilt binary)"
+arch=('x86_64')
+url="https://github.com/silverling/xuan"
+license=('MIT' 'Apache-2.0' 'LGPL-2.1-only' 'OFL-1.1')
+options=(!strip)
+depends=('gcc-libs' 'glibc' 'hicolor-icon-theme' 'libx11' 'libxcb' 'libxcursor' 'libxfixes'
+         'libxi' 'libxkbcommon' 'libxkbcommon-x11' 'libxrandr' 'shared-mime-info'
+         'vulkan-icd-loader' 'wayland')
+optdepends=('libheif: HEIC/HEIF import'
+            'vulkan-driver: hardware accelerated rendering'
+            'xdg-desktop-portal: native file dialogs')
+conflicts=('xuan')
+provides=('xuan')
+source=("${url}/releases/download/v${pkgver}/${_pkgname}-${pkgver}-linux-x86_64.tar.gz")
+sha256sums=('ca09e8f9cf4b24862cc607e3656f4755c8c969e6c182db6026107dd5dbeaf64e')
+
+package() {
+  cd "$srcdir/${_pkgname}-${pkgver}-linux-x86_64"
+
+  install -D -m0755 "bin/${_pkgname}" "$pkgdir/usr/bin/${_pkgname}"
+  install -D -m0644 "share/applications/${_app_id}.desktop" \
+      "$pkgdir/usr/share/applications/${_app_id}.desktop"
+  install -D -m0644 "share/mime/packages/${_app_id}.xml" \
+      "$pkgdir/usr/share/mime/packages/${_app_id}.xml"
+
+  local _file
+  for _file in share/icons/hicolor/*/apps/${_app_id}.png; do
+    install -D -m0644 "$_file" "$pkgdir/usr/$_file"
+  done
+
+  for _file in share/doc/${_pkgname}/*; do
+    install -D -m0644 "$_file" "$pkgdir/usr/share/doc/$pkgname/${_file##*/}"
+  done
+
+  install -D -m0644 share/licenses/${_pkgname}/LICENSE \
+      "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  install -D -m0644 share/licenses/${_pkgname}/Inter-LICENSE.txt \
+      "$pkgdir/usr/share/licenses/$pkgname/Inter-LICENSE.txt"
+  install -D -m0644 share/licenses/${_pkgname}/rawler-LGPL-2.1.txt \
+      "$pkgdir/usr/share/licenses/$pkgname/rawler-LGPL-2.1.txt"
+  for _file in share/licenses/${_pkgname}/egui-winit/*; do
+    install -D -m0644 "$_file" \
+        "$pkgdir/usr/share/licenses/$pkgname/egui-winit/${_file##*/}"
+  done
+}
