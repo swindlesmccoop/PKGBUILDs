@@ -1,0 +1,34 @@
+# Maintainer: swindlesmccoop@waifu.club
+pkgname=grok-bot-cli-bin
+_pkgname=grok-bot-cli
+pkgver=0.12.4
+pkgrel=1
+pkgdesc="CLI for Grok Bot agents and groups, run with Deno (prebuilt npm bundle)"
+arch=('any')
+url="https://github.com/ScriptedAlchemy/grok-bot-cli"
+license=('MIT')
+depends=('deno')
+optdepends=('libsecret: read the Grok Bot session key from the system keyring')
+conflicts=('grok-bot-cli')
+provides=('grok-bot-cli')
+source=("https://registry.npmjs.org/${_pkgname}/-/${_pkgname}-${pkgver}.tgz")
+noextract=("${_pkgname}-${pkgver}.tgz")
+sha256sums=('80a9465500fd88796871d7f69781ec4a4af093cca1562b0aee0bb5cb062d6e55')
+
+package() {
+  install -d "$pkgdir/usr/lib/${_pkgname}"
+  bsdtar -xf "$srcdir/${_pkgname}-${pkgver}.tgz" -C "$pkgdir/usr/lib/${_pkgname}" \
+      --strip-components=1
+
+  local _bin _script
+  for _bin in gbot:gbot.mjs grok-bot:gbot.mjs gbot-install:gbot-install.js; do
+    _script="/usr/lib/${_pkgname}/dist/bin/${_bin#*:}"
+    install -d "$pkgdir/usr/bin"
+    printf '#!/bin/sh\nexec deno run -A --no-config "%s" "$@"\n' "$_script" \
+        > "$pkgdir/usr/bin/${_bin%%:*}"
+    chmod 0755 "$pkgdir/usr/bin/${_bin%%:*}"
+  done
+
+  install -D -m0644 "$pkgdir/usr/lib/${_pkgname}/LICENSE" \
+      "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
