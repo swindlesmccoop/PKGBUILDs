@@ -21,7 +21,7 @@ package() {
       --strip-components=1
 
   local _bin _script
-  for _bin in gbot:gbot.mjs grok-bot:gbot.mjs gbot-install:gbot-install.js; do
+  for _bin in gbot:gbot.mjs gbot-install:gbot-install.js; do
     _script="/usr/lib/${_pkgname}/dist/bin/${_bin#*:}"
     install -d "$pkgdir/usr/bin"
     printf '#!/bin/sh\nexec deno run -A --no-config "%s" "$@"\n' "$_script" \
