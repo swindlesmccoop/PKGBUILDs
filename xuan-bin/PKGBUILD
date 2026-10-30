@@ -2,7 +2,7 @@
 pkgname=xuan-bin
 _pkgname=xuan
 _app_id=me.silverl.xuan
-pkgver=0.1.1
+pkgver=0.3.0
 pkgrel=1
 pkgdesc="Image editor for layered compositions, photo retouching, and Nikon RAW development (prebuilt binary)"
 arch=('x86_64')
@@ -18,7 +18,7 @@ optdepends=('libheif: HEIC/HEIF import'
 conflicts=('xuan')
 provides=('xuan')
 source=("${url}/releases/download/v${pkgver}/${_pkgname}-${pkgver}-linux-x86_64.tar.gz")
-sha256sums=('ca09e8f9cf4b24862cc607e3656f4755c8c969e6c182db6026107dd5dbeaf64e')
+sha256sums=('0d7fd4ba0389b9872d214357070b4a2496adfaf2f94b5acc47dfe84df336fa25')
 
 package() {
   cd "$srcdir/${_pkgname}-${pkgver}-linux-x86_64"
