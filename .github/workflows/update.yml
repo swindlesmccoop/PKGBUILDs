@@ -1,0 +1,116 @@
+name: Update PKGBUILDs
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-pkgbuilds
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      packages: ${{ steps.list.outputs.packages }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        run: |
+          echo "packages=$(ls -d */ | tr -d / | while read -r d; do [ -f "$d/PKGBUILD" ] && echo "$d"; done | jq -R . | jq -sc .)" >> "$GITHUB_OUTPUT"
+
+  update:
+    needs: discover
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        package: ${{ fromJSON(needs.discover.outputs.packages) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.package }}
+    steps:
+      - name: Install tooling
+        working-directory: /
+        run: |
+          pacman -Syu --noconfirm git jq pacman-contrib sudo
+          useradd -m builder
+          echo 'builder ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/builder
+
+      - uses: actions/checkout@v4
+
+      - name: Check upstream version
+        id: check
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          source ./PKGBUILD
+          current=$pkgver
+
+          # Work out where upstream publishes releases from the PKGBUILD's own sources.
+          latest=
+          for src in "${source[@]}"; do
+            src=${src#*::}
+            if [[ $src =~ ^https://registry\.npmjs\.org/(.+)/-/ ]]; then
+              # npm tarball: ask the registry for the latest dist-tag
+              latest=$(curl -fsSL "https://registry.npmjs.org/${BASH_REMATCH[1]}/latest" | jq -er .version)
+              break
+            elif [[ $src =~ ^https://github\.com/([^/]+/[^/]+)/releases/download/([^/]+)/ ]]; then
+              # GitHub release asset: the tag is a template around $pkgver (e.g. v1.2.3, foo-v1.2.3)
+              repo=${BASH_REMATCH[1]}
+              tag=${BASH_REMATCH[2]//"$pkgver"/@VER@}
+              latest=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" \
+                  "https://api.github.com/repos/$repo/releases?per_page=100" |
+                  jq -er --arg p "${tag%%@VER@*}" --arg s "${tag#*@VER@}" '
+                    [.[] | select(.draft == false and .prerelease == false) | .tag_name
+                     | select(startswith($p) and endswith($s))
+                     | .[($p | length):(length - ($s | length))]][0]')
+              break
+            fi
+          done
+          if [ -z "$latest" ]; then
+            echo "::error::could not determine upstream version source for ${{ matrix.package }}"
+            exit 1
+          fi
+          echo "current=$current latest=$latest"
+          if [ "$(vercmp "$latest" "$current")" -gt 0 ]; then
+            echo "updated=true" >> "$GITHUB_OUTPUT"
+            echo "old=$current" >> "$GITHUB_OUTPUT"
+            echo "new=$latest" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump PKGBUILD
+        if: steps.check.outputs.updated == 'true'
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          chown -R builder: "$GITHUB_WORKSPACE"
+          sudo -u builder sh -ec '
+            sed -i -E "s/^pkgver=.*/pkgver=${{ steps.check.outputs.new }}/; s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+            updpkgsums
+            makepkg --printsrcinfo > .SRCINFO
+          '
+
+      - name: Test build
+        if: steps.check.outputs.updated == 'true'
+        run: |
+          sudo -u builder makepkg --syncdeps --noconfirm --cleanbuild --force
+          for p in *.pkg.tar.*; do pacman -Qlp "$p"; done
+
+      - name: Commit and push
+        if: steps.check.outputs.updated == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add PKGBUILD .SRCINFO
+          git commit -m "${{ matrix.package }}: ${{ steps.check.outputs.old }} -> ${{ steps.check.outputs.new }}"
+          for i in 1 2 3; do
+            git pull --rebase origin "$GITHUB_REF_NAME" && git push origin "HEAD:$GITHUB_REF_NAME" && exit 0
+            sleep 5
+          done
+          exit 1
