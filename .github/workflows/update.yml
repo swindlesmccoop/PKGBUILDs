@@ -61,16 +61,35 @@ jobs:
               # npm tarball: ask the registry for the latest dist-tag
               latest=$(curl -fsSL "https://registry.npmjs.org/${BASH_REMATCH[1]}/latest" | jq -er .version)
               break
-            elif [[ $src =~ ^https://github\.com/([^/]+/[^/]+)/releases/download/([^/]+)/ ]]; then
-              # GitHub release asset: the tag is a template around $pkgver (e.g. v1.2.3, foo-v1.2.3)
-              repo=${BASH_REMATCH[1]}
-              tag=${BASH_REMATCH[2]//"$pkgver"/@VER@}
-              latest=$(curl -fsSL -H "Authorization: Bearer $GITHUB_TOKEN" \
-                  "https://api.github.com/repos/$repo/releases?per_page=100" |
-                  jq -er --arg p "${tag%%@VER@*}" --arg s "${tag#*@VER@}" '
-                    [.[] | select(.draft == false and .prerelease == false) | .tag_name
+            elif [[ $src =~ ^https://(github\.com|codeberg\.org)/([^/]+/[^/]+)/releases/download/([^/]+)/ ]]; then
+              # Release asset: the tag is a template around $pkgver (v1.2.3, foo-v1.2.3, 1.2.3-alpha).
+              # Arch versions can't contain "-", so match on the tag with "-" mapped to ".".
+              host=${BASH_REMATCH[1]}
+              repo=${BASH_REMATCH[2]}
+              tag=${BASH_REMATCH[3]}
+              norm=${tag//-/.}
+              if [[ $norm != *"$pkgver"* ]]; then
+                echo "::error::release tag $tag does not contain pkgver $pkgver"
+                exit 1
+              fi
+              before=${norm%%"$pkgver"*}
+              prefix=${tag:0:${#before}}
+              suffix=${tag:$((${#before} + ${#pkgver}))}
+              # Only follow prereleases if the package already tracks one.
+              [[ $pkgver =~ (alpha|beta|rc|pre) ]] && pre=true || pre=false
+              if [ "$host" = github.com ]; then
+                api="https://api.github.com/repos/$repo/releases?per_page=100"
+                auth=(-H "Authorization: Bearer $GITHUB_TOKEN")
+              else
+                # Codeberg (Gitea) has the same release JSON; never send it the GitHub token
+                api="https://codeberg.org/api/v1/repos/$repo/releases?limit=50"
+                auth=()
+              fi
+              latest=$(curl -fsSL "${auth[@]}" "$api" |
+                  jq -er --arg p "$prefix" --arg s "$suffix" --argjson pre "$pre" '
+                    [.[] | select(.draft == false and (.prerelease == false or $pre)) | .tag_name
                      | select(startswith($p) and endswith($s))
-                     | .[($p | length):(length - ($s | length))]][0]')
+                     | .[($p | length):(length - ($s | length))] | gsub("-"; ".")][0]')
               break
             fi
           done
