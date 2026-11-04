@@ -1,6 +1,6 @@
 pkgbase = grok-bot-cli-bin
 	pkgdesc = CLI for Grok Bot agents and groups, run with Deno (prebuilt npm bundle)
-	pkgver = 0.12.4
+	pkgver = 0.12.5
 	pkgrel = 1
 	url = https://github.com/ScriptedAlchemy/grok-bot-cli
 	arch = any
@@ -9,8 +9,8 @@ pkgbase = grok-bot-cli-bin
 	optdepends = libsecret: read the Grok Bot session key from the system keyring
 	provides = grok-bot-cli
 	conflicts = grok-bot-cli
-	noextract = grok-bot-cli-0.12.4.tgz
-	source = https://registry.npmjs.org/grok-bot-cli/-/grok-bot-cli-0.12.4.tgz
-	sha256sums = 80a9465500fd88796871d7f69781ec4a4af093cca1562b0aee0bb5cb062d6e55
+	noextract = grok-bot-cli-0.12.5.tgz
+	source = https://registry.npmjs.org/grok-bot-cli/-/grok-bot-cli-0.12.5.tgz
+	sha256sums = a94a4c753e70ac403bb80545150ed2b340edddd07028784a9a2c2ef34a180393
 
 pkgname = grok-bot-cli-bin

@@ -1,7 +1,7 @@
 # Maintainer: swindlesmccoop@waifu.club
 pkgname=grok-bot-cli-bin
 _pkgname=grok-bot-cli
-pkgver=0.12.4
+pkgver=0.12.5
 pkgrel=1
 pkgdesc="CLI for Grok Bot agents and groups, run with Deno (prebuilt npm bundle)"
 arch=('any')
@@ -13,7 +13,7 @@ conflicts=('grok-bot-cli')
 provides=('grok-bot-cli')
 source=("https://registry.npmjs.org/${_pkgname}/-/${_pkgname}-${pkgver}.tgz")
 noextract=("${_pkgname}-${pkgver}.tgz")
-sha256sums=('80a9465500fd88796871d7f69781ec4a4af093cca1562b0aee0bb5cb062d6e55')
+sha256sums=('a94a4c753e70ac403bb80545150ed2b340edddd07028784a9a2c2ef34a180393')
 
 package() {
   install -d "$pkgdir/usr/lib/${_pkgname}"
