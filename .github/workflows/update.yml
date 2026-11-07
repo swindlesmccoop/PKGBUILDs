@@ -61,6 +61,15 @@ jobs:
               # npm tarball: ask the registry for the latest dist-tag
               latest=$(curl -fsSL "https://registry.npmjs.org/${BASH_REMATCH[1]}/latest" | jq -er .version)
               break
+            elif [[ $src =~ ^https://downloads\.cursor\.com/grokbot/ ]]; then
+              # Grok Bot has no public repo; ask its updater API (as the app does) for the
+              # latest stable. The download URL embeds a build commit, which we also bump.
+              resp=$(curl -fsSL "https://api2.cursor.sh/updates/api/update/linux-x64/sand/0.0.1/0000000000000000000000000000000000000000/stable")
+              latest=$(jq -er .productVersion <<<"$resp")
+              newcommit=$(jq -er .url <<<"$resp" | sed -nE 's|.*/grokbot/stable/([0-9a-f]{40})/.*|\1|p')
+              [ -n "$newcommit" ] || { echo "::error::no commit in updater response"; exit 1; }
+              echo "newcommit=$newcommit" >> "$GITHUB_OUTPUT"
+              break
             elif [[ $src =~ ^https://(github\.com|codeberg\.org)/([^/]+/[^/]+)/releases/download/([^/]+)/ ]]; then
               # Release asset: the tag is a template around $pkgver (v1.2.3, foo-v1.2.3, 1.2.3-alpha).
               # Arch versions can't contain "-", so match on the tag with "-" mapped to ".".
@@ -111,6 +120,9 @@ jobs:
           chown -R builder: "$GITHUB_WORKSPACE"
           sudo -u builder sh -ec '
             sed -i -E "s/^pkgver=.*/pkgver=${{ steps.check.outputs.new }}/; s/^pkgrel=.*/pkgrel=1/" PKGBUILD
+            if [ -n "${{ steps.check.outputs.newcommit }}" ]; then
+              sed -i -E "s/^_commit=.*/_commit=${{ steps.check.outputs.newcommit }}/" PKGBUILD
+            fi
             updpkgsums
             makepkg --printsrcinfo > .SRCINFO
           '

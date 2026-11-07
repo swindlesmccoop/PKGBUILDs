@@ -1,0 +1,135 @@
+# Maintainer: swindlesmccoop@waifu.club
+# Based on the AUR package maintained by:
+# Maintainer: falser <zjf_0731@163.com>
+# Co-Maintainer: rafaeloledo <rafaeloliveiraledo@gmail.com>
+# Co-Maintainer: Olaf Wriggers <olaf@olwig.xyz>
+
+pkgname=grok-bot-bin
+pkgver=0.78.4
+pkgrel=1
+pkgdesc='Grok Bot desktop agent (prebuilt binary)'
+arch=('x86_64')
+url='https://cursor.com'
+license=('LicenseRef-Proprietary')
+depends=(
+    gtk3
+    libnotify
+    nss
+    libxss
+    libxtst
+    xdg-utils
+    at-spi2-core
+    util-linux-libs
+    libsecret
+    hicolor-icon-theme
+    alsa-lib
+    libappindicator
+    libxkbcommon
+    libdrm
+    mesa
+)
+optdepends=('apparmor: load the shipped userns profile')
+provides=('sand' 'grok-bot')
+conflicts=('sand' 'grok-bot' 'grokbot-linux-port' 'grokbot-linux-port-bin')
+replaces=('grok-bot')
+options=('!strip' '!debug')
+_commit=5a890c0d0fc9c678c5a339eb86b31dcfbd0b4730
+source=(
+    "grok-bot_${pkgver}_amd64.deb::https://downloads.cursor.com/grokbot/stable/${_commit}/linux/x64/grok-bot_${pkgver}_amd64.deb"
+)
+sha256sums=('90930f14e7b0267720e8d7be0f40c5c3012240940ae74a52ab58eca5ee2cf1aa')
+noextract=("grok-bot_${pkgver}_amd64.deb")
+
+package() {
+    bsdtar -O -xf "grok-bot_${pkgver}_amd64.deb" data.tar.xz \
+        | bsdtar -C "${pkgdir}" -xJf -
+
+    local _res="${pkgdir}/opt/Grok Bot/resources"
+
+    # Add a tray icon. Point package.json's "main" (same length, so the asar
+    # header stays valid) at a wrapper that runs the original entry point.
+    local _old='"main": "dist/electron-main/main.cjs"'
+    local _new='"main": ".//dist/../../grok-tray.cjs"'
+    [[ ${#_old} -eq ${#_new} ]]
+    LC_ALL=C grep -qF "${_old}" "${_res}/app.asar"
+    LC_ALL=C sed -i "s|${_old}|${_new}|" "${_res}/app.asar"
+    cat > "${_res}/grok-tray.cjs" <<'EOF'
+'use strict'
+const fs = require('fs')
+const path = require('path')
+const { app, Tray, Menu, BrowserWindow } = require('electron')
+
+let tray = null
+let quitting = false
+
+function showWindow() {
+  const wins = BrowserWindow.getAllWindows()
+  const win = wins.find((w) => !w.getParentWindow()) || wins[0]
+  if (!win) return
+  if (win.isMinimized()) win.restore()
+  win.show()
+  win.focus()
+}
+
+function hideOnClose(win) {
+  if (win.getParentWindow()) return
+  win.on('close', (event) => {
+    if (quitting) return
+    event.preventDefault()
+    win.hide()
+  })
+}
+
+app.on('before-quit', () => { quitting = true })
+app.on('browser-window-created', (_event, win) => hideOnClose(win))
+
+require(path.join(process.resourcesPath, 'app.asar', 'dist/electron-main/main.cjs'))
+
+app.whenReady().then(() => {
+  const icon = [48, 64, 32]
+    .map((n) => `/usr/share/icons/hicolor/${n}x${n}/apps/grok-bot.png`)
+    .find((p) => fs.existsSync(p))
+  if (!icon) return
+  tray = new Tray(icon)
+  tray.setToolTip('Grok Bot')
+  tray.setContextMenu(Menu.buildFromTemplate([
+    { label: 'Show Grok Bot', click: showWindow },
+    { type: 'separator' },
+    { label: 'Quit', click: () => { quitting = true; app.quit() } },
+  ]))
+  tray.on('click', showWindow)
+})
+EOF
+
+    # electron-builder now ships an unconfined userns profile. Debian
+    # postinst copies it to /etc/apparmor.d; pacman never runs that.
+    install -Dm644 "${_res}/apparmor-profile" \
+        "${pkgdir}/etc/apparmor.d/${pkgname%-bin}"
+
+    # Debian postinst uses update-alternatives; pacman never runs it, so ship
+    # a launcher. Chromium bundles fontconfig 2.17; Arch's caches are from 2.18+.
+    # Skip the version check so the app does not warn on every launch.
+    install -d "${pkgdir}/usr/bin"
+    printf '%s\n' '#!/bin/sh' \
+        'export FONTCONFIG_NO_CHECK_CACHE_VERSION=1' \
+        'exec "/opt/Grok Bot/grok-bot" "$@"' \
+        > "${pkgdir}/usr/bin/grok-bot"
+    chmod 0755 "${pkgdir}/usr/bin/grok-bot"
+    ln -s grok-bot "${pkgdir}/usr/bin/sand"
+
+    sed -i 's|^Exec=.*|Exec=grok-bot %U|' \
+        "${pkgdir}/usr/share/applications/grok-bot.desktop"
+
+    install -Dm644 "${pkgdir}/opt/Grok Bot/LICENSE.electron.txt" \
+        "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE.electron.txt"
+    install -Dm644 "${pkgdir}/opt/Grok Bot/LICENSES.chromium.html" \
+        "${pkgdir}/usr/share/licenses/${pkgname}/LICENSES.chromium.html"
+
+    rm -rf "${pkgdir}/usr/share/doc"
+
+    # SUID chrome-sandbox is only needed when user namespaces are unavailable
+    # (e.g. linux-hardened). Stock Arch kernels already provide them.
+    if ! { [[ -L /proc/self/ns/user ]] && unshare --user true; }; then
+        chmod 4755 "${pkgdir}/opt/Grok Bot/chrome-sandbox"
+    fi
+}
