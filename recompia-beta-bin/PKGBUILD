@@ -1,0 +1,41 @@
+# Maintainer: swindlesmccoop@waifu.club
+pkgname=recompia-beta-bin
+_pkgname=PokopiaRecomp
+_pkgver=0.9.1-beta.2
+pkgver=${_pkgver//-/_}
+pkgrel=1
+pkgdesc="Launcher and PC port of Pokopia, built through Proton (prebuilt binary, testing builds)"
+arch=('x86_64')
+url="https://github.com/Dittobyte/Recompia"
+license=('GPL-3.0-only')
+options=(!strip)
+depends=('fuse2' 'hicolor-icon-theme')
+optdepends=('steam: provides Proton Experimental, needed to build and run the game'
+            'umu-launcher: alternative to Steam for running the game'
+            'wine: alternative to Steam for running the game')
+conflicts=('recompia' 'recompia-bin')
+provides=('recompia')
+source=("${_pkgname}-${_pkgver}-linux-x64.tar.gz::${url}/releases/download/v${_pkgver}/${_pkgname}-${_pkgver}-linux-x64.tar.gz"
+        "recompia-${pkgver}.png::https://raw.githubusercontent.com/Dittobyte/Recompia/v${_pkgver}/launcher/src-tauri/icons-testing/icon.png"
+        'recompia'
+        'recompia.desktop')
+sha256sums=('064a965d5d7fa1cf85adbd97659f861fa30cd30c3d0bd18a6056587bce011305'
+            '9b6c3134fc33020b5ccfe3777dcc58c8e8fd8e2f617bc3ff61178ff914949a98'
+            'b25fcc9bac96d1aaf978b51a5ccef47ae1bb8b826efcd099fcf3b1014db52976'
+            '0d594d513a66ba3068577ad65f913f08201b8f4af453958ce987d8f481b3412c')
+
+package() {
+  cd "$srcdir/${_pkgname}-${_pkgver}"
+
+  install -d "$pkgdir/usr/share/recompia"
+  cp -r --no-preserve=ownership . "$pkgdir/usr/share/recompia/"
+  chmod 0755 "$pkgdir/usr/share/recompia/PokopiaLauncher.AppImage"
+  echo "$pkgver" > "$pkgdir/usr/share/recompia/.pkgver"
+
+  install -D -m0755 "$srcdir/recompia" "$pkgdir/usr/bin/recompia"
+  install -D -m0644 "$srcdir/recompia.desktop" \
+      "$pkgdir/usr/share/applications/recompia.desktop"
+  install -D -m0644 "$srcdir/recompia-${pkgver}.png" \
+      "$pkgdir/usr/share/icons/hicolor/256x256/apps/recompia.png"
+  install -D -m0644 LICENSE.txt "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

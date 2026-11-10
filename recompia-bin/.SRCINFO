@@ -1,0 +1,26 @@
+pkgbase = recompia-bin
+	pkgdesc = Launcher and PC port of Pokopia, built through Proton (prebuilt binary, stable releases)
+	pkgver = 0.9.0
+	pkgrel = 1
+	url = https://github.com/Dittobyte/Recompia
+	arch = x86_64
+	license = GPL-3.0-only
+	depends = fuse2
+	depends = hicolor-icon-theme
+	optdepends = steam: provides Proton Experimental, needed to build and run the game
+	optdepends = umu-launcher: alternative to Steam for running the game
+	optdepends = wine: alternative to Steam for running the game
+	provides = recompia
+	conflicts = recompia
+	conflicts = recompia-beta-bin
+	options = !strip
+	source = PokopiaRecomp-0.9.0-linux-x64.tar.gz::https://github.com/Dittobyte/Recompia/releases/download/v0.9.0/PokopiaRecomp-0.9.0-linux-x64.tar.gz
+	source = recompia-0.9.0.png::https://raw.githubusercontent.com/Dittobyte/Recompia/v0.9.0/launcher/src-tauri/icons/icon.png
+	source = recompia
+	source = recompia.desktop
+	sha256sums = f8aefee2ad36da7f5575195e662def46db38ef8fad0e8e89155115b3f2eae7de
+	sha256sums = b2d54a926562c2c481279e86bfaa2425887fb4b6aa9c3c8991a959be8b860be8
+	sha256sums = b25fcc9bac96d1aaf978b51a5ccef47ae1bb8b826efcd099fcf3b1014db52976
+	sha256sums = 0d594d513a66ba3068577ad65f913f08201b8f4af453958ce987d8f481b3412c
+
+pkgname = recompia-bin
