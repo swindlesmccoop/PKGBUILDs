@@ -15,13 +15,9 @@ optdepends=('steam: provides Proton Experimental, needed to build and run the ga
 conflicts=('recompia' 'recompia-beta-bin')
 provides=('recompia')
 source=("${_pkgname}-${pkgver}-linux-x64.tar.gz::${url}/releases/download/v${pkgver}/${_pkgname}-${pkgver}-linux-x64.tar.gz"
-        "recompia-${pkgver}.png::https://raw.githubusercontent.com/Dittobyte/Recompia/v${pkgver}/launcher/src-tauri/icons/icon.png"
-        'recompia'
-        'recompia.desktop')
+        "recompia-${pkgver}.png::https://raw.githubusercontent.com/Dittobyte/Recompia/v${pkgver}/launcher/src-tauri/icons/icon.png")
 sha256sums=('f8aefee2ad36da7f5575195e662def46db38ef8fad0e8e89155115b3f2eae7de'
-            'b2d54a926562c2c481279e86bfaa2425887fb4b6aa9c3c8991a959be8b860be8'
-            'b25fcc9bac96d1aaf978b51a5ccef47ae1bb8b826efcd099fcf3b1014db52976'
-            '0d594d513a66ba3068577ad65f913f08201b8f4af453958ce987d8f481b3412c')
+            'b2d54a926562c2c481279e86bfaa2425887fb4b6aa9c3c8991a959be8b860be8')
 
 package() {
   cd "$srcdir/${_pkgname}-${pkgver}"
@@ -31,9 +27,37 @@ package() {
   chmod 0755 "$pkgdir/usr/share/recompia/PokopiaLauncher.AppImage"
   echo "$pkgver" > "$pkgdir/usr/share/recompia/.pkgver"
 
-  install -D -m0755 "$srcdir/recompia" "$pkgdir/usr/bin/recompia"
-  install -D -m0644 "$srcdir/recompia.desktop" \
-      "$pkgdir/usr/share/applications/recompia.desktop"
+  # The launcher writes saves, settings and the built pkp.exe next to itself and
+  # updates itself in place, so run it from a writable per-user copy.
+  install -d "$pkgdir/usr/bin"
+  cat > "$pkgdir/usr/bin/recompia" <<'EOF'
+#!/bin/sh
+src=/usr/share/recompia
+dest="${XDG_DATA_HOME:-$HOME/.local/share}/recompia"
+stamp="$(cat "$src/.pkgver")"
+
+if [ ! -f "$dest/.pkgver" ] || [ "$(cat "$dest/.pkgver")" != "$stamp" ]; then
+  mkdir -p "$dest"
+  cp -r --remove-destination "$src/." "$dest/"
+  chmod -R u+w "$dest"
+fi
+
+cd "$dest" || exit 1
+exec ./PokopiaLauncher.AppImage "$@"
+EOF
+  chmod 0755 "$pkgdir/usr/bin/recompia"
+
+  install -d "$pkgdir/usr/share/applications"
+  cat > "$pkgdir/usr/share/applications/recompia.desktop" <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=Pokopia Recomp
+Comment=Launcher for the Pokopia PC recompilation
+Exec=recompia
+Icon=recompia
+Categories=Game;
+Terminal=false
+EOF
   install -D -m0644 "$srcdir/recompia-${pkgver}.png" \
       "$pkgdir/usr/share/icons/hicolor/256x256/apps/recompia.png"
   install -D -m0644 LICENSE.txt "$pkgdir/usr/share/licenses/$pkgname/LICENSE"

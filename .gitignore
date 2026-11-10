@@ -12,4 +12,3 @@ README.md
 *_Linux
 *.tar.gz
 *.tgz
-!recompia-*/recompia.desktop
