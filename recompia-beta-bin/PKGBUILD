@@ -1,8 +1,8 @@
 # Maintainer: swindlesmccoop@waifu.club
 pkgname=recompia-beta-bin
 _pkgname=PokopiaRecomp
-_pkgver=0.9.1-beta.2
-pkgver=${_pkgver//-/_}
+pkgver=0.9.1.beta.2
+_pkgver=${pkgver/.beta./-beta.}
 pkgrel=1
 pkgdesc="Launcher and PC port of Pokopia, built through Proton (prebuilt binary, testing builds)"
 arch=('x86_64')
