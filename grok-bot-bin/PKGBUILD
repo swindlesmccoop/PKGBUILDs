@@ -5,7 +5,7 @@
 # Co-Maintainer: Olaf Wriggers <olaf@olwig.xyz>
 
 pkgname=grok-bot-bin
-pkgver=1.0.1
+pkgver=1.0.3
 pkgrel=1
 pkgdesc='Grok Bot desktop agent (prebuilt binary)'
 arch=('x86_64')
@@ -33,11 +33,11 @@ provides=('sand' 'grok-bot')
 conflicts=('sand' 'grok-bot' 'grokbot-linux-port' 'grokbot-linux-port-bin')
 replaces=('grok-bot')
 options=('!strip' '!debug')
-_commit=7eb488cd12ea2e65065a6b227f3ab49160b618bd
+_commit=be8eaf76ba888db05a6a8950922f5fc8bb4d14e9
 source=(
     "grok-bot_${pkgver}_amd64.deb::https://downloads.cursor.com/grokbot/stable/${_commit}/linux/x64/grok-bot_${pkgver}_amd64.deb"
 )
-sha256sums=('86086a84a995836b8cbf09dcab33abe0b0fde782cd9fa5b98a427ede711cc337')
+sha256sums=('ef90d8171fe207f39b887753c1ff492c6684a1a9f910d6e1dfa0303889fcf8f0')
 noextract=("grok-bot_${pkgver}_amd64.deb")
 
 package() {
