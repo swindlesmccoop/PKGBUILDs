@@ -1,7 +1,7 @@
 # Maintainer: swindlesmccoop@waifu.club
 pkgname=recompia-bin
 _pkgname=PokopiaRecomp
-pkgver=0.15.0
+pkgver=0.15.1
 pkgrel=1
 pkgdesc="Launcher and PC port of Pokopia, built through Proton (prebuilt binary, stable releases)"
 arch=('x86_64')
@@ -16,7 +16,7 @@ conflicts=('recompia' 'recompia-beta-bin')
 provides=('recompia')
 source=("${_pkgname}-${pkgver}-linux-x64.tar.gz::${url}/releases/download/v${pkgver}/${_pkgname}-${pkgver}-linux-x64.tar.gz"
         "recompia-${pkgver}.png::https://raw.githubusercontent.com/Dittobyte/Recompia/v${pkgver}/launcher/src-tauri/icons/icon.png")
-sha256sums=('04fbb87cded28a3c3209dbcd10b5f07205873818d69d0571a4c2a459432a62aa'
+sha256sums=('86d35fbb5674191db83d49a2f2b3f2bc88e58fb9a681a1a4c8f4a9c40f8eef5b'
             '954ec3a080face65d3812ba3668a382851c8f39b6b47d18a1849435e0d9c937b')
 
 package() {
