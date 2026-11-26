@@ -20,5 +20,51 @@ sha256sums=('9d9a5f8448cf92f4634d6ea49b5263409157cccf5b68a8ff10e962c8d7e52c28'
 
 package() {
   tar -xzf "$srcdir/${_pkgname}-v${_pkgver}-linux-x86_64.tar.gz" -C "$pkgdir" --no-same-owner
+  chmod 755 "$pkgdir"/usr/lib/millennium/libmillennium_*
+
+  # Steam loads libXtst.so.6 from steamrt64 (inside pressure-vessel, where the
+  # host's /usr is /run/host/usr). Link Millennium's bootstrap over it via a hook.
+  install -d "$pkgdir/usr/share/libalpm/scripts" "$pkgdir/usr/share/libalpm/hooks"
+  cat > "$pkgdir/usr/share/libalpm/scripts/millennium-link" <<'EOS'
+#!/bin/bash
+while IFS=: read -r user _ uid _ _ home _; do
+  [ "$uid" -ge 1000 ] || continue
+  steam="$home/.local/share/Steam"
+  [ -d "$steam" ] || continue
+  case "$1" in
+    link)
+      runuser -u "$user" -- mkdir -p "$steam/steamrt64"
+      runuser -u "$user" -- ln -sf /run/host/usr/lib/millennium/libmillennium_bootstrap_x64.so "$steam/steamrt64/libXtst.so.6"
+      ;;
+    unlink)
+      runuser -u "$user" -- rm -f "$steam/steamrt64/libXtst.so.6"
+      ;;
+  esac
+done < <(getent passwd)
+EOS
+  chmod 755 "$pkgdir/usr/share/libalpm/scripts/millennium-link"
+  cat > "$pkgdir/usr/share/libalpm/hooks/$pkgname-link.hook" <<EOH
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = $pkgname
+
+[Action]
+Description = Linking Millennium into Steam...
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/millennium-link link
+EOH
+  cat > "$pkgdir/usr/share/libalpm/hooks/$pkgname-unlink.hook" <<EOH
+[Trigger]
+Operation = Remove
+Type = Package
+Target = $pkgname
+
+[Action]
+Description = Unlinking Millennium from Steam...
+When = PostTransaction
+Exec = /usr/share/libalpm/scripts/millennium-link unlink
+EOH
   install -D -m0644 "$srcdir/LICENSE-${_pkgver}" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
 }
