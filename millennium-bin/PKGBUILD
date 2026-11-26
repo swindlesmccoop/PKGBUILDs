@@ -1,0 +1,24 @@
+# Maintainer: swindlesmccoop@waifu.club
+pkgname=millennium-bin
+_pkgname=millennium
+pkgver=3.6.3
+_pkgver=${pkgver/.beta./-beta.}
+pkgrel=1
+pkgdesc="Open-source framework for Steam client themes and plugins (prebuilt binary, stable releases)"
+arch=('x86_64')
+url="https://github.com/SteamClientHomebrew/Millennium"
+license=('MIT')
+options=(!strip)
+depends=('steam')
+conflicts=('millennium' 'millennium-beta-bin')
+provides=('millennium')
+source=("${_pkgname}-v${_pkgver}-linux-x86_64.tar.gz::${url}/releases/download/v${_pkgver}/${_pkgname}-v${_pkgver}-linux-x86_64.tar.gz"
+        "LICENSE-${_pkgver}::https://raw.githubusercontent.com/SteamClientHomebrew/Millennium/v${_pkgver}/LICENSE.md")
+noextract=("${_pkgname}-v${_pkgver}-linux-x86_64.tar.gz")
+sha256sums=('9d9a5f8448cf92f4634d6ea49b5263409157cccf5b68a8ff10e962c8d7e52c28'
+            'f01d1b8bce439ee29491817247a38611c41f7d1de4360b5577d4498d103fbf8b')
+
+package() {
+  tar -xzf "$srcdir/${_pkgname}-v${_pkgver}-linux-x86_64.tar.gz" -C "$pkgdir" --no-same-owner
+  install -D -m0644 "$srcdir/LICENSE-${_pkgver}" "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}
