@@ -1,6 +1,6 @@
 pkgbase = recompia-beta-bin
 	pkgdesc = Launcher and PC port of Pokopia, built through Proton (prebuilt binary, testing builds)
-	pkgver = 0.18.0
+	pkgver = 0.18.1
 	pkgrel = 1
 	url = https://github.com/Dittobyte/Recompia
 	arch = x86_64
@@ -14,9 +14,9 @@ pkgbase = recompia-beta-bin
 	conflicts = recompia
 	conflicts = recompia-bin
 	options = !strip
-	source = PokopiaRecomp-0.18.0-linux-x64.tar.gz::https://github.com/Dittobyte/Recompia/releases/download/v0.18.0/PokopiaRecomp-0.18.0-linux-x64.tar.gz
-	source = recompia-0.18.0.png::https://raw.githubusercontent.com/Dittobyte/Recompia/v0.18.0/launcher/src-tauri/icons-testing/icon.png
-	sha256sums = f584faad99f62807c9348bdc62bb5bdaa947a551a18251ec4e3ff8969ec371d6
+	source = PokopiaRecomp-0.18.1-linux-x64.tar.gz::https://github.com/Dittobyte/Recompia/releases/download/v0.18.1/PokopiaRecomp-0.18.1-linux-x64.tar.gz
+	source = recompia-0.18.1.png::https://raw.githubusercontent.com/Dittobyte/Recompia/v0.18.1/launcher/src-tauri/icons-testing/icon.png
+	sha256sums = fabea5e4ec9c7ca66ce137b775854d8f0e8bcd578bc438e0afdf7c30b5ada963
 	sha256sums = 08f75c76d4ce96acf0e3e0b6133d42f71131f0da90f3e043a66785e67fb4eb52
 
 pkgname = recompia-beta-bin
